@@ -63,14 +63,32 @@ class LoginPage extends StatelessWidget {
                       SizedBox(
                         height: 30,
                       ),
-                      RaisedButton(
-                        onPressed: () {
-                          if (_formKey.currentState.validate()) {
-                            BlocProvider.of<AuthCubit>(context)
-                                .postLogin(_username.text, _password.text);
+                      // RaisedButton(
+                      //   onPressed: () {
+                      //     if (_formKey.currentState.validate()) {
+                      //       BlocProvider.of<AuthCubit>(context)
+                      //           .postLogin(_username.text, _password.text);
+                      //     }
+                      //   },
+                      //   child: Text('Login'),
+                      // )
+                      BlocConsumer<AuthCubit, AuthState>(
+                        listener: (context, state) {},
+                        builder: (context, state) {
+                          if (state is AuthLoginLoading) {
+                            return CircularProgressIndicator();
+                          } else {
+                            return RaisedButton(
+                              onPressed: () {
+                                if (_formKey.currentState.validate()) {
+                                  BlocProvider.of<AuthCubit>(context).postLogin(
+                                      _username.text, _password.text);
+                                }
+                              },
+                              child: Text('Login'),
+                            );
                           }
                         },
-                        child: Text('Login'),
                       )
                     ],
                   ),

@@ -18,3 +18,5 @@ class AuthTokenGenerated extends AuthState {
 }
 
 class AuthLogin extends AuthState {}
+
+class AuthLoginLoading extends AuthState {}

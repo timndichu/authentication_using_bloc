@@ -10,12 +10,13 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit({this.repository}) : super(AuthInitial());
 
   void postLogin(String username, String password) {
+    emit(AuthLoginLoading());
     repository.postLogin(username, password).then((result) {
       if (result["error"]) {
         emit(AuthError(
             error:
                 "An error occurred. Please check your internet and try again"));
-      } else if (result["body"] is String) {
+      } else if (result["body"] == "username or password is incorrect") {
         emit(AuthError(error: "Incorrect username or password"));
       } else {
         emit(AuthLogin());
