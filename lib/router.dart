@@ -23,8 +23,15 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => BlocBuilder<AuthCubit, AuthState>(
             builder: (context, state) {
-              if (state.token == "xxx") {
-                return ProductsScreen();
+              print('state is');
+              print(state.token);
+              print(state.username);
+              if (state.token != null && state.username != null) {
+                if (state.token.isNotEmpty) {
+                  return ProductsScreen();
+                } else {
+                  return LoginPage();
+                }
               } else {
                 return LoginPage();
               }

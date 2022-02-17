@@ -17,7 +17,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is AuthLogin) {
+        if (state is AuthLoginComplete) {
           Navigator.pushReplacementNamed(context, PRODUCTS_ROUTE);
         } else if (state is AuthError) {
           Toast.show(state.error, context,
@@ -50,8 +50,7 @@ class LoginPage extends StatelessWidget {
                             validator: (val) =>
                                 val.isEmpty ? 'Enter your username' : null,
                             decoration: InputDecoration(
-                                hintText: state.username ?? "blank",
-                                labelText: state.username ?? "blank"),
+                                hintText: "Username", labelText: "Username"),
                           );
                         },
                       ),

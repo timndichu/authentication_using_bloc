@@ -23,12 +23,16 @@ class AuthCubit extends Cubit<AuthState> with HydratedMixin {
                 "An error occurred. Please check your internet and try again"));
       } else if (result["body"] == "username or password is incorrect") {
         emit(AuthError(error: "Incorrect username or password"));
-        emit(AuthState(username: username, token: "xxx"));
       } else {
-        emit(AuthLogin());
+        emit(AuthLoginComplete());
         emit(AuthState(username: username, token: result["body"]["token"]));
       }
     });
+  }
+
+  void postLogout() {
+    emit(AuthState(username: "", token: ""));
+    emit(AuthLogout());
   }
 
   @override

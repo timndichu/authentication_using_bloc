@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:auth_bloc/controllers/cubit/auth/auth_cubit.dart';
 import 'package:auth_bloc/controllers/cubit/products/products_cubit.dart';
 import 'package:auth_bloc/models/constants/strings.dart';
 import 'package:auth_bloc/models/product.dart';
@@ -13,34 +14,48 @@ class ProductsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     BlocProvider.of<ProductCubit>(context).fetchProduct();
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Products"),
-          actions: [
-            InkWell(
-              onTap: () => Navigator.pushNamed(context, ADD_TODO_ROUTE),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Icon(Icons.add),
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is AuthLogout) {
+          Navigator.of(context).pushReplacementNamed('/');
+        }
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text("Products"),
+            actions: [
+              InkWell(
+                onTap: () => Navigator.pushNamed(context, ADD_TODO_ROUTE),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Icon(Icons.add),
+                ),
               ),
-            )
-          ],
-        ),
-        body: BlocBuilder<ProductCubit, ProductsState>(
-          builder: (context, state) {
-            if (state is! ProductsLoaded) {
-              return const Center(child: CircularProgressIndicator());
-            }
+              InkWell(
+                onTap: () => {BlocProvider.of<AuthCubit>(context).postLogout()},
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Icon(Icons.logout),
+                ),
+              )
+            ],
+          ),
+          body: BlocBuilder<ProductCubit, ProductsState>(
+            builder: (context, state) {
+              if (state is! ProductsLoaded) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-            final products = (state as ProductsLoaded).products;
+              final products = (state as ProductsLoaded).products;
 
-            return SingleChildScrollView(
-              child: Column(
-                children: products.map((e) => _product(e, context)).toList(),
-              ),
-            );
-          },
-        ));
+              return SingleChildScrollView(
+                child: Column(
+                  children: products.map((e) => _product(e, context)).toList(),
+                ),
+              );
+            },
+          )),
+    );
   }
 
   Widget _product(Product product, context) {
