@@ -1,22 +1,59 @@
 part of 'auth_cubit.dart';
 
-@immutable
-abstract class AuthState {}
+class AuthState extends Equatable {
+  final String username;
+  final String token;
 
-class AuthInitial extends AuthState {}
+  const AuthState({this.token, this.username});
+
+  @override
+  List<Object> get props => [token, username];
+
+  Map<String, dynamic> toMap() {
+    return {
+      'username': username,
+      'token': token,
+    };
+  }
+
+  factory AuthState.fromMap(Map<String, dynamic> map) {
+    return AuthState(
+      username: map['username'] ?? '',
+      token: map['token'] ?? '',
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory AuthState.fromJson(String source) =>
+      AuthState.fromMap(json.decode(source));
+}
+
+class AuthInitial extends AuthState {
+  @override
+  List<Object> get props => [];
+}
 
 class AuthError extends AuthState {
   final String error;
 
-  AuthError({this.error});
+  const AuthError({this.error});
+
+  @override
+  List<Object> get props => [];
 }
 
-class AuthTokenGenerated extends AuthState {
-  final Map<String, String> token;
-
-  AuthTokenGenerated({this.token});
+class AuthLogin extends AuthState {
+  @override
+  List<Object> get props => [];
 }
 
-class AuthLogin extends AuthState {}
+class AuthLoginLoading extends AuthState {
+  @override
+  List<Object> get props => [];
+}
 
-class AuthLoginLoading extends AuthState {}
+class AuthLoginComplete extends AuthState {
+  @override
+  List<Object> get props => [];
+}

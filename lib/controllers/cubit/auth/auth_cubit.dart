@@ -1,13 +1,18 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'dart:convert';
+
 import 'package:auth_bloc/controllers/repository.dart';
-import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+
+import 'package:equatable/equatable.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'auth_state.dart';
 
-class AuthCubit extends Cubit<AuthState> {
+class AuthCubit extends Cubit<AuthState> with HydratedMixin {
   final Repository repository;
 
-  AuthCubit({this.repository}) : super(AuthInitial());
+  AuthCubit({this.repository}) : super(AuthState(username: "", token: ""));
 
   void postLogin(String username, String password) {
     emit(AuthLoginLoading());
@@ -18,9 +23,21 @@ class AuthCubit extends Cubit<AuthState> {
                 "An error occurred. Please check your internet and try again"));
       } else if (result["body"] == "username or password is incorrect") {
         emit(AuthError(error: "Incorrect username or password"));
+        emit(AuthState(username: username, token: "xxx"));
       } else {
         emit(AuthLogin());
+        emit(AuthState(username: username, token: result["body"]["token"]));
       }
     });
+  }
+
+  @override
+  AuthState fromJson(Map<String, dynamic> json) {
+    return AuthState.fromMap(json);
+  }
+
+  @override
+  Map<String, dynamic> toJson(AuthState state) {
+    return state.toMap();
   }
 }

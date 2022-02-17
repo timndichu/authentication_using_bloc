@@ -43,12 +43,17 @@ class LoginPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      TextFormField(
-                        controller: _username,
-                        validator: (val) =>
-                            val.isEmpty ? 'Enter your username' : null,
-                        decoration: InputDecoration(
-                            hintText: 'username', labelText: 'username'),
+                      BlocBuilder<AuthCubit, AuthState>(
+                        builder: (context, state) {
+                          return TextFormField(
+                            controller: _username,
+                            validator: (val) =>
+                                val.isEmpty ? 'Enter your username' : null,
+                            decoration: InputDecoration(
+                                hintText: state.username ?? "blank",
+                                labelText: state.username ?? "blank"),
+                          );
+                        },
                       ),
                       SizedBox(
                         height: 20,

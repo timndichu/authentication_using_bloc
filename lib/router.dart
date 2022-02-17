@@ -17,51 +17,31 @@ import 'views/products/products_screen.dart';
 import 'views/auth_screens/login.dart';
 
 class AppRouter {
-  Repository repository;
-  ProductCubit todosCubit;
-  AuthCubit authCubit;
-
-  AppRouter() {
-    repository = Repository(networkService: NetworkService());
-    todosCubit = ProductCubit(repository: repository);
-    authCubit = AuthCubit(repository: repository);
-  }
-
   Route generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case "/":
         return MaterialPageRoute(
-          builder: (_) => BlocProvider.value(
-            value: authCubit,
-            child: LoginPage(),
+          builder: (_) => BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              if (state.token == "xxx") {
+                return ProductsScreen();
+              } else {
+                return LoginPage();
+              }
+            },
           ),
         );
       case "/products":
         return MaterialPageRoute(
-          builder: (_) => BlocProvider.value(
-            value: todosCubit,
-            child: const ProductsScreen(),
-          ),
+          builder: (_) => ProductsScreen(),
         );
       case EDIT_TODO_ROUTE:
         final todo = settings.arguments as Product;
-        return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-              create: (BuildContext context) => EditProductCubit(
-                    repository: repository,
-                    productsCubit: todosCubit,
-                  ),
-              child: Container()),
-        );
+        return MaterialPageRoute(builder: (_) => Container());
+
       case ADD_TODO_ROUTE:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (BuildContext context) => AddProductCubit(
-              repository: repository,
-              productsCubit: todosCubit,
-            ),
-            child: AddProductScreen(),
-          ),
+          builder: (_) => AddProductScreen(),
         );
       default:
         return null;
